@@ -176,7 +176,7 @@ function chooseAccess(access){
   DATA.equipment=BASE_DATA.equipment;
   DATA.costumes=BASE_DATA.costumes;
   DATA.venues=[...BASE_DATA.venues.map(v=>({...v,name:v.name+' · Петербург'})),...MOSCOW_VENUES.map(v=>({...v,name:v.name+' · Москва'}))].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
-  const route=access==='technicians'?'home':'group:'+access;
+  const route=access==='technicians'?'home':'group-access:'+access;
   routeStack=['access',route];activeRoute=route;render();window.scrollTo({top:0});
 }
 
@@ -429,12 +429,24 @@ function render(){
   if(activeRoute === 'access'){
     setHeader('Выберите доступ','','Поиск');
     searchInput.closest('.search-wrap').classList.add('hidden');
-    screen.innerHTML=`<div class="grid home-grid groups-grid access-grid">${BASE_DATA.groups.map(g=>`
-      <button class="card nav-card group-logo-card" data-access="${g.id}" aria-label="${g.name}">
+    screen.innerHTML=`<div class="access-list">${BASE_DATA.groups.map(g=>`
+      <button class="access-tile access-${g.id}" data-access="${g.id}" aria-label="${g.name}">
         <img src="./logo-${g.id}-white.png" alt="${g.name}">
-      </button>`).join('')}</div>
-      <button class="list-item technicians-access" data-access="technicians"><div class="technician-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="12" width="4" height="8" rx="2"/><rect x="17" y="12" width="4" height="8" rx="2"/><path d="M17 20c-1 2-3 2-5 2"/></svg></div><div class="list-main"><h4>Техники</h4></div><div class="list-chevron">›</div></button>`;
+        <span class="access-arrow" aria-hidden="true">›</span>
+      </button>`).join('')}
+      <button class="access-tile access-technicians" data-access="technicians" aria-label="Техники">
+        <img src="./logo-likhter.png" alt="Лихтер-студия"><span class="access-caption">Техники</span><span class="access-arrow" aria-hidden="true">›</span>
+      </button></div>`;
     screen.querySelectorAll('[data-access]').forEach(button=>button.addEventListener('click',()=>chooseAccess(button.dataset.access)));
+    return;
+  }
+
+  if(activeRoute.startsWith('group-access:')){
+    const group=BASE_DATA.groups.find(g=>g.id===activeRoute.slice(13));
+    if(!group){navigate('access',false);return;}
+    setHeader(group.name,'');
+    searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.innerHTML='';
     return;
   }
 
