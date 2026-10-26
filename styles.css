@@ -141,3 +141,18 @@ a.list-item:focus-visible{outline:2px solid var(--blue-2);outline-offset:3px}
 
 .kit-media{display:block;width:100%;height:auto;max-height:75vh;object-fit:contain;border-radius:12px;background:#10151d}
 .kit-download{margin-top:16px;justify-content:center}
+
+/* Access themes retain the original dark panels and gradient placement. */
+body{--theme-rgb:45,140,255;--ambient-main:#156dff;--ambient-secondary:#0d4d9e;
+background:radial-gradient(circle at 15% -10%,rgba(var(--theme-rgb),.18),transparent 32%),radial-gradient(circle at 100% 30%,rgba(var(--theme-rgb),.08),transparent 28%),linear-gradient(180deg,#090d13 0%,#07090d 100%)}
+body[data-theme="konchiki"]{--theme-rgb:55,197,112;--ambient-main:#23ad60;--ambient-secondary:#125e3b}
+body[data-theme="nemodnye"]{--theme-rgb:176,122,235;--ambient-main:#a666dc;--ambient-secondary:#693a91}
+body[data-theme="rvi-bayan"]{--theme-rgb:229,65,72;--ambient-main:#d92e40;--ambient-secondary:#8b1c32}
+body[data-theme="true-party-band"]{--theme-rgb:218,174,64;--ambient-main:#c99a30;--ambient-secondary:#806019}
+.ambient-a{background:var(--ambient-main)}
+.ambient-b{background:var(--ambient-secondary)}
+.technicians-access{margin-top:12px;min-height:78px}
+.technicians-access h4{font-size:17px}
+.technician-icon{width:40px;height:40px;color:#fff;display:grid;place-items:center}
+.technician-icon svg{width:32px;height:32px}
+.access-grid .group-logo-card{padding:24px}
