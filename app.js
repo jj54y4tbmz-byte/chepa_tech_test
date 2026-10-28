@@ -453,7 +453,35 @@ function render(){
   if(activeRoute === 'home'){
     setHeader('Техники','','Поиск');
     screen.innerHTML = document.querySelector('#homeTemplate').innerHTML;
+    const menu=screen.querySelector('.home-grid');
+    for(const [route,name,icon,description] of [['galka','Галка','▧','Фото и видео'],['cheatsheets','Шпаргалки','≡','Проблемы и решения']]){
+      const button=document.createElement('button');button.className='card nav-card';button.dataset.route=route;
+      button.innerHTML=`<div class="icon-badge">${icon}</div><div class="card-copy"><h3>${name}</h3><p>${description}</p></div><span class="chev">›</span>`;
+      menu.append(button);
+    }
     screen.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.route)));
+    return;
+  }
+
+  if(activeRoute === 'galka'){
+    setHeader('Галка','','Поиск по категориям');
+    const categories=[['audio','Аудио','♫'],['video','Видео','▷'],['light','Свет','☼'],['staff','Стафы','▣'],['other','Прочее','⋯']];
+    screen.innerHTML='<div class="list">'+categories.map(([id,name,icon])=>`<button class="list-item searchable" data-galka="${id}" aria-label="${name}"><div class="list-icon">${icon}</div><div class="list-main"><h4>${name}</h4></div><div class="list-chevron">›</div></button>`).join('')+'</div>';
+    screen.querySelectorAll('[data-galka]').forEach(button=>button.addEventListener('click',()=>navigate('galka:'+button.dataset.galka)));
+    return;
+  }
+  if(activeRoute.startsWith('galka:')){
+    const category={audio:'Аудио',video:'Видео',light:'Свет',staff:'Стафы',other:'Прочее'}[activeRoute.slice(6)];
+    if(!category){navigate('galka',false);return;}
+    setHeader(category,'');
+    searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.innerHTML='<div class="empty">Фото и видео пока не добавлены.</div>';
+    return;
+  }
+  if(activeRoute === 'cheatsheets'){
+    setHeader('Шпаргалки','');
+    searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.innerHTML='<div class="empty">Шпаргалки пока не добавлены.</div>';
     return;
   }
 
@@ -729,7 +757,7 @@ function searchCatalog(){
     ...DATA.standards.map(d=>({name:d.name,section:'Стандарты',route:'standard:'+d.file,keywords:SEARCH_KEYWORDS[d.file]||''})),
     ...DATA.venues.flatMap(v=>(v.halls||[v]).map(h=>({name:v.name+(v.halls?' · '+h.name:''),section:'Площадки',route:'venue:'+v.id+(v.halls?':'+h.id:''),keywords:[h.address,h.sound,h.load,h.parking,h.dressing].join(' ')}))),
     ...DATA.repair.map(([name,keywords])=>({name,section:'Ремонт',route:'repair',keywords})),
-    ...[['Группы','groups'],['Стандарты','standards'],['Ремонт','repair'],['Площадки','venues']].map(([name,route])=>({name,route,section:'Раздел',keywords:''}))
+    ...[['Группы','groups'],['Стандарты','standards'],['Ремонт','repair'],['Площадки','venues'],['Галка','galka'],['Шпаргалки','cheatsheets']].map(([name,route])=>({name,route,section:'Раздел',keywords:''}))
   ];
 }
 
@@ -778,3 +806,4 @@ if(window.Telegram?.WebApp){
 }
 
 render();
+
