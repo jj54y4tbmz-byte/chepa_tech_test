@@ -1,3 +1,4 @@
+const GALKA_DRUMMERS = [{"id": "vanya", "name": "ВАНЯ", "file": "galka-drums-vanya.json", "photos": 7, "videos": 0}, {"id": "gera", "name": "ГЕРА", "file": "galka-drums-gera.json", "photos": 1, "videos": 1}, {"id": "nikita", "name": "НИКИТА", "file": "galka-drums-nikita.json", "photos": 5, "videos": 1}, {"id": "serega", "name": "СЕРЕГА", "file": "galka-drums-serega.json", "photos": 4, "videos": 0}, {"id": "chernyh", "name": "ЧЕРНЫХ", "file": "galka-drums-chernyh.json", "photos": 2, "videos": 0}];
 const COMPUTER_CHEATSHEET = [{"heading": "1. Не включается комп", "items": ["Проверить питание рэков на сцене", "Проверить дотык провода питания в комп или в блок питания"]}, {"heading": "2. Не идет ничего в пульт с компа", "items": ["Проверить настройки карты (должно быть x32)", "Проверить в пульте параметр clock (должен быть internal)"]}, {"heading": "3. Щелчки/остановки плейбэка", "items": ["Проверить сэмпл рейт (в пульте и в компе должно быть одинаково - 48000)", "Проверить, что убраны галочки в рипере у параметров сэмпл рейт и буффер сайз", "В аблетоне проверить буффер сайз (должно быть 256)", "Проверить usb кабель от пульта и от миди коробки"]}, {"heading": "4. Плейбэк дублируется в другие каналы", "items": ["В рипере закрыть мастер канал, если он открыт", "На канале плейбэка проверить, что выход только на нужные каналы. Выход на мастер рипера отключить"]}, {"heading": "5. Не приходит обработанный микрофон в Немодных", "items": ["Проверить, что сигнал приходит в Аблетон с директивного канала", "Проверить, что не включены плюсы или толкбэк", "На каналах с именем вокалиста проверить, что вход верный, что нажата кнопка IN (голубого цвета)", "На канале с тюном проверить, что сигнал доходит до него и уходит на нужный card in пульта"]}];
 const VIDEO_CHEATSHEET = ["* Убедись в правильности подключения всего", "* Убедись, что XLR-кабель от пульта до звуковой карты целый", "* Проверь, приходит ли LTC-сигнал из пульта в звуковую карту. Если сигнал в пульт приходит, но дальше не идет — проверь назначен ли выход в режиме «Pre EQ»", "* Если сигнал приходит, но фоны всё равно не работают или работают, но с прерываниями и заиканиями — проверь выключены ли эффекты на канале с LTC-сигналом внутри пульта и не клипует ли сигнал (на X32 ручка Trim должна быть на -18, а на звуковой карте все потенциометры в крайнем левом положении)", "* Если все в порядке, но видео всё равно не работает — перезагрузи QLab", "* В случае, если с нашей стороны проблем не выявлено, но видео всё равно не запускается — назначь в настройках QLab в разделе «Video» во вкладке «Output Routing» встроенный дисплей MacBook и запусти плейбек, если видео пошло — проблемы на стороне местного/прокатного аппарата и отвечающего за него человека", "LTC из Reaper идёт на 24 кардаут в случае группы «True Party Band», на 23 — у «Рви Баян» и на 32 — у «Немодные». С пульта он идёт на 6 выход в режиме «Pre EQ». На канале выключены все эффекты, убраны все посылы, сам канал закрыт, а его фейдер находится в самом нижнем положении.", "Комплект айтемов в кейсе с видео-стафом:", "1. Ноутбук;", "2. Блок питания и провод для ноутбука;", "3. Провод HDMI — Type-C;", "4. Провод HDMI — HDMI;", "5. Свитчер HDMI сигнала;", "6. Провод USB Type-A — USB Type-B;", "7. Звуковая карта;", "8. USB-хаб;", "9. 2 XLR-кабеля по 10 метров каждый."];
 const GALKA_POSTS = [{"id": "video-connection", "title": "ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО", "file": "galka-video-connection.json", "group": null, "pages": 8}, {"id": "video-rvi-bayan", "title": "ВИДЕО ПРОЕКТ РВИ БАЯН", "file": "galka-video-rvi-bayan.json", "group": "rvi-bayan", "pages": 8}, {"id": "video-true-party-band", "title": "ВИДЕО ПРОЕКТ TRUE PARTY BAND", "file": "galka-video-true-party-band.json", "group": "true-party-band", "pages": 7}, {"id": "video-nemodnye", "title": "ВИДЕО ПРОЕКТ НЕМОДНЫЕ", "file": "galka-video-nemodnye.json", "group": "nemodnye", "pages": 7}];
@@ -420,6 +421,10 @@ screen.addEventListener('click',event=>{
 });
 
 
+function appendDrummersLink(){
+  let list=screen.querySelector('.list');if(!list){list=document.createElement('div');list.className='list';screen.append(list);}
+  const button=document.createElement('button');button.className='list-item searchable';button.textContent='Барабанщики Немодные';button.addEventListener('click',()=>navigate('galka-drummers'));list.append(button);
+}
 function renderGalkaPosts(posts){
   screen.replaceChildren();
   if(!posts.length){screen.innerHTML='<div class="empty">Материалы пока не добавлены.</div>';return;}
@@ -487,6 +492,8 @@ function render(){
     searchInput.closest('.search-wrap').classList.add('hidden');
     if(activeRoute==='galka:video'){
       renderGalkaPosts(GALKA_POSTS);
+    }else if(activeRoute==='galka:staff'&&activeCity==='spb'){
+      screen.replaceChildren();appendDrummersLink();
     }else screen.innerHTML='<div class="empty">Фото и видео пока не добавлены.</div>';
     return;
   }
@@ -494,7 +501,21 @@ function render(){
     const group=activeRoute.slice(12);
     if(!DATA.groups.some(g=>g.id===group)){navigate('groups',false);return;}
     setHeader('Галка','');searchInput.closest('.search-wrap').classList.add('hidden');
-    renderGalkaPosts(GALKA_POSTS.filter(p=>p.group===group));return;
+    renderGalkaPosts(GALKA_POSTS.filter(p=>p.group===group));if(group==='nemodnye'&&activeCity==='spb')appendDrummersLink();return;
+  }
+  if(activeRoute==='galka-drummers'){
+    if(activeCity!=='spb'){navigate('galka',false);return;}
+    setHeader('Барабанщики Немодные','','Поиск по именам');screen.replaceChildren();
+    const list=document.createElement('div');list.className='list';screen.append(list);
+    for(const person of GALKA_DRUMMERS){const button=document.createElement('button');button.className='list-item searchable';button.textContent=person.name;button.addEventListener('click',()=>navigate('galka-drummer:'+person.id));list.append(button);}return;
+  }
+  if(activeRoute.startsWith('galka-drummer:')){
+    const person=GALKA_DRUMMERS.find(p=>p.id===activeRoute.slice(14));
+    if(activeCity!=='spb'||!person){navigate('galka',false);return;}
+    setHeader(person.name,'');searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.innerHTML='<div class="drummer-album"></div>';const container=screen.querySelector('.drummer-album');
+    if(window.renderDrummerAlbum)window.renderDrummerAlbum(container,person.file);
+    else{const script=document.createElement('script');script.src='./galka-gallery.js?v=20261028';script.onload=()=>{if(container.isConnected)window.renderDrummerAlbum(container,person.file);};script.onerror=()=>{if(container.isConnected)container.textContent='Не удалось открыть альбом. Вернитесь назад и попробуйте снова.';};document.body.append(script);}return;
   }
   if(activeRoute.startsWith('galka-post:')){
     const post=GALKA_POSTS.find(p=>p.id===activeRoute.slice(11));

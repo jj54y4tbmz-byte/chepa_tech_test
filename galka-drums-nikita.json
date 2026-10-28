@@ -1,0 +1,35 @@
+{
+  "name": "НИКИТА",
+  "media": [
+    {
+      "file": "galka-drums-nikita-01.jpg",
+      "kind": "image",
+      "name": "2026-10-28 18.17.05.jpg"
+    },
+    {
+      "file": "galka-drums-nikita-02.jpg",
+      "kind": "image",
+      "name": "2026-10-28 18.17.16.jpg"
+    },
+    {
+      "file": "galka-drums-nikita-03.jpg",
+      "kind": "image",
+      "name": "2026-10-28 18.17.20.jpg"
+    },
+    {
+      "file": "galka-drums-nikita-04.jpg",
+      "kind": "image",
+      "name": "2026-10-28 18.17.23.jpg"
+    },
+    {
+      "file": "galka-drums-nikita-05.jpg",
+      "kind": "image",
+      "name": "2026-10-28 18.17.27.jpg"
+    },
+    {
+      "file": "galka-drums-nikita-06.mov",
+      "kind": "video",
+      "name": "IMG_7703.MOV"
+    }
+  ]
+}
