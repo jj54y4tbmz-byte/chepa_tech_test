@@ -1,3 +1,4 @@
+const GALKA_POSTS = [{"id": "video-connection", "title": "ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО", "file": "galka-video-connection.json", "group": null, "pages": 8}, {"id": "video-rvi-bayan", "title": "ВИДЕО ПРОЕКТ РВИ БАЯН", "file": "galka-video-rvi-bayan.json", "group": "rvi-bayan", "pages": 8}, {"id": "video-true-party-band", "title": "ВИДЕО ПРОЕКТ TRUE PARTY BAND", "file": "galka-video-true-party-band.json", "group": "true-party-band", "pages": 7}, {"id": "video-nemodnye", "title": "ВИДЕО ПРОЕКТ НЕМОДНЫЕ", "file": "galka-video-nemodnye.json", "group": "nemodnye", "pages": 7}];
 const BASE_DATA = {
   groups: [
     {id:'nemodnye', name:'Немодные', desc:'6 составов · оборудование · Stage Plan · костюмы'},
@@ -417,6 +418,13 @@ screen.addEventListener('click',event=>{
 });
 
 
+function renderGalkaPosts(posts){
+  screen.replaceChildren();
+  if(!posts.length){screen.innerHTML='<div class="empty">Материалы пока не добавлены.</div>';return;}
+  const list=document.createElement('div');list.className='list';screen.append(list);
+  for(const post of posts){const button=document.createElement('button');button.className='list-item searchable';const copy=document.createElement('div');copy.className='list-main';const heading=document.createElement('h4');heading.textContent=post.title;const note=document.createElement('p');note.textContent=post.pages+' стр. · картинки и инструкции';copy.append(heading,note);button.append(copy);button.addEventListener('click',()=>navigate('galka-post:'+post.id));list.append(button);}
+}
+
 function render(){
   costumeSession++;
   closePdf();
@@ -476,20 +484,26 @@ function render(){
     setHeader(category,'');
     searchInput.closest('.search-wrap').classList.add('hidden');
     if(activeRoute==='galka:video'){
-      screen.innerHTML='<div class="list"><button class="list-item" data-video-post><div class="list-icon">▷</div><div class="list-main"><h4>ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО</h4><p>8 страниц · картинки и инструкции</p></div><div class="list-chevron">›</div></button></div>';
-      screen.querySelector('[data-video-post]').addEventListener('click',()=>navigate('galka-post:video-connection'));
+      renderGalkaPosts(GALKA_POSTS);
     }else screen.innerHTML='<div class="empty">Фото и видео пока не добавлены.</div>';
     return;
   }
-  if(activeRoute === 'galka-post:video-connection'){
-    setHeader('ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО','');
-    searchInput.closest('.search-wrap').classList.add('hidden');
+  if(activeRoute.startsWith('group-galka:')){
+    const group=activeRoute.slice(12);
+    if(!DATA.groups.some(g=>g.id===group)){navigate('groups',false);return;}
+    setHeader('Галка','');searchInput.closest('.search-wrap').classList.add('hidden');
+    renderGalkaPosts(GALKA_POSTS.filter(p=>p.group===group));return;
+  }
+  if(activeRoute.startsWith('galka-post:')){
+    const post=GALKA_POSTS.find(p=>p.id===activeRoute.slice(11));
+    if(!post){navigate('galka',false);return;}
+    setHeader(post.title,'');searchInput.closest('.search-wrap').classList.add('hidden');
     screen.innerHTML='<div class="galka-post-container"></div>';
     const container=screen.querySelector('.galka-post-container');
-    if(window.renderGalkaPost)window.renderGalkaPost(container);
+    if(window.renderGalkaPost)window.renderGalkaPost(container,post.file);
     else{
-      const script=document.createElement('script');script.src='./galka-carousel.js?v=20261028';
-      script.addEventListener('load',()=>{if(container.isConnected)window.renderGalkaPost(container);});
+      const script=document.createElement('script');script.src='./galka-carousel.js?v=20261028-groups';
+      script.addEventListener('load',()=>{if(container.isConnected)window.renderGalkaPost(container,post.file);});
       script.addEventListener('error',()=>{if(container.isConnected)container.textContent='Не удалось загрузить пост. Вернитесь назад и попробуйте снова.';});document.body.append(script);
     }
     return;
@@ -516,7 +530,7 @@ function render(){
     const group=DATA.groups.find(g=>g.id===id);
     if(!group){navigate('groups',false);return;}
     setHeader(group.name,'','Поиск по разделу');
-    const sections=[['costumes','Костюмы','⌘'],['stageplans','Стейдж-план','⌁'],['firstaid','Аптечка','✚'],['scenes','Сцены','▧'],['equipment-list','Списки оборудования','▣']].filter(([route])=>id!=='konchiki' || route!=='costumes');
+    const sections=[['costumes','Костюмы','⌘'],['stageplans','Стейдж-план','⌁'],['firstaid','Аптечка','✚'],['scenes','Сцены','▧'],['equipment-list','Списки оборудования','▣'],['group-galka','Галка','▧']].filter(([route])=>id!=='konchiki' || route!=='costumes');
     screen.innerHTML=`<div class="list">${sections.map(([route,name,icon])=>`
       <button class="list-item searchable" data-section="${route}:${id}">
         <div class="list-icon">${icon}</div><div class="list-main"><h4>${name}</h4></div><div class="list-chevron">›</div>
