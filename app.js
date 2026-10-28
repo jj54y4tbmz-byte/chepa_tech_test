@@ -1,3 +1,4 @@
+const VIDEO_CHEATSHEET = ["* Убедись в правильности подключения всего", "* Убедись, что XLR-кабель от пульта до звуковой карты целый", "* Проверь, приходит ли LTC-сигнал из пульта в звуковую карту. Если сигнал в пульт приходит, но дальше не идет — проверь назначен ли выход в режиме «Pre EQ»", "* Если сигнал приходит, но фоны всё равно не работают или работают, но с прерываниями и заиканиями — проверь выключены ли эффекты на канале с LTC-сигналом внутри пульта и не клипует ли сигнал (на X32 ручка Trim должна быть на -18, а на звуковой карте все потенциометры в крайнем левом положении)", "* Если все в порядке, но видео всё равно не работает — перезагрузи QLab", "* В случае, если с нашей стороны проблем не выявлено, но видео всё равно не запускается — назначь в настройках QLab в разделе «Video» во вкладке «Output Routing» встроенный дисплей MacBook и запусти плейбек, если видео пошло — проблемы на стороне местного/прокатного аппарата и отвечающего за него человека", "LTC из Reaper идёт на 24 кардаут в случае группы «True Party Band», на 23 — у «Рви Баян» и на 32 — у «Немодные». С пульта он идёт на 6 выход в режиме «Pre EQ». На канале выключены все эффекты, убраны все посылы, сам канал закрыт, а его фейдер находится в самом нижнем положении.", "Комплект айтемов в кейсе с видео-стафом:", "1. Ноутбук;", "2. Блок питания и провод для ноутбука;", "3. Провод HDMI — Type-C;", "4. Провод HDMI — HDMI;", "5. Свитчер HDMI сигнала;", "6. Провод USB Type-A — USB Type-B;", "7. Звуковая карта;", "8. USB-хаб;", "9. 2 XLR-кабеля по 10 метров каждый."];
 const GALKA_POSTS = [{"id": "video-connection", "title": "ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО", "file": "galka-video-connection.json", "group": null, "pages": 8}, {"id": "video-rvi-bayan", "title": "ВИДЕО ПРОЕКТ РВИ БАЯН", "file": "galka-video-rvi-bayan.json", "group": "rvi-bayan", "pages": 8}, {"id": "video-true-party-band", "title": "ВИДЕО ПРОЕКТ TRUE PARTY BAND", "file": "galka-video-true-party-band.json", "group": "true-party-band", "pages": 7}, {"id": "video-nemodnye", "title": "ВИДЕО ПРОЕКТ НЕМОДНЫЕ", "file": "galka-video-nemodnye.json", "group": "nemodnye", "pages": 7}];
 const BASE_DATA = {
   groups: [
@@ -511,10 +512,17 @@ function render(){
   if(activeRoute === 'cheatsheets'){
     setHeader('Шпаргалки','');
     searchInput.closest('.search-wrap').classList.add('hidden');
-    screen.innerHTML='<div class="empty">Шпаргалки пока не добавлены.</div>';
+    screen.innerHTML='<div class="list"><button class="list-item" data-cheatsheet-video><div class="list-icon">≡</div><div class="list-main"><h4>ШПАРГАЛКА ПО ВИДЕО</h4><p>Проверка подключения и решение проблем</p></div><div class="list-chevron">›</div></button></div>';
+    screen.querySelector('[data-cheatsheet-video]').addEventListener('click',()=>navigate('cheatsheet:video'));
     return;
   }
 
+  if(activeRoute === 'cheatsheet:video'){
+    setHeader('ШПАРГАЛКА ПО ВИДЕО','');searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.replaceChildren();const article=document.createElement('article');article.className='costume-description';article.style.lineHeight='1.7';
+    for(const text of VIDEO_CHEATSHEET){const p=document.createElement('p');p.textContent=text;p.style.whiteSpace='pre-wrap';p.style.margin='0 0 16px';article.append(p);}
+    screen.append(article);return;
+  }
   if(activeRoute === 'groups'){
     setHeader('Группы','СОСТАВЫ И МАТЕРИАЛЫ','Поиск по группам');
     screen.innerHTML = `<div class="grid home-grid groups-grid">${DATA.groups.map(g=>`
