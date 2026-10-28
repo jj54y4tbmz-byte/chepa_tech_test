@@ -475,7 +475,23 @@ function render(){
     if(!category){navigate('galka',false);return;}
     setHeader(category,'');
     searchInput.closest('.search-wrap').classList.add('hidden');
-    screen.innerHTML='<div class="empty">Фото и видео пока не добавлены.</div>';
+    if(activeRoute==='galka:video'){
+      screen.innerHTML='<div class="list"><button class="list-item" data-video-post><div class="list-icon">▷</div><div class="list-main"><h4>ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО</h4><p>8 страниц · картинки и инструкции</p></div><div class="list-chevron">›</div></button></div>';
+      screen.querySelector('[data-video-post]').addEventListener('click',()=>navigate('galka-post:video-connection'));
+    }else screen.innerHTML='<div class="empty">Фото и видео пока не добавлены.</div>';
+    return;
+  }
+  if(activeRoute === 'galka-post:video-connection'){
+    setHeader('ПОРЯДОК ПОДКЛЮЧЕНИЯ ВИДЕО','');
+    searchInput.closest('.search-wrap').classList.add('hidden');
+    screen.innerHTML='<div class="galka-post-container"></div>';
+    const container=screen.querySelector('.galka-post-container');
+    if(window.renderGalkaPost)window.renderGalkaPost(container);
+    else{
+      const script=document.createElement('script');script.src='./galka-carousel.js?v=20261028';
+      script.addEventListener('load',()=>{if(container.isConnected)window.renderGalkaPost(container);});
+      script.addEventListener('error',()=>{if(container.isConnected)container.textContent='Не удалось загрузить пост. Вернитесь назад и попробуйте снова.';});document.body.append(script);
+    }
     return;
   }
   if(activeRoute === 'cheatsheets'){
